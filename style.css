@@ -76,16 +76,3 @@ h1.temp {
     justify-content: center;
     text-align: center;
 }
-
-.weather-loading {
-    visibility: hidden;
-}
-
-.weather-loading::after {
-    visibility: visible;
-    content: "Loading...";
-    color: white;
-    position: absolute;
-    top: 0;
-    left: 20px;
-}

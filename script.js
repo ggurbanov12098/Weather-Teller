@@ -3,18 +3,29 @@ let weather = {
     // https://api.openweathermap.org/data/2.5/weather?lat=40&lon=50&units=metric&appid=50697639d130e6a0f1a08e4c6825c5f0
 
     fetchWeather: function(city){
-        fetch("https://api.openweathermap.org/data/2.5/weather?q=" 
-        + city 
-        + "&units=metric&appid=" 
-        + this.apiKey)
+        fetch("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&appid=" + this.apiKey)
             .then((response) => response.json())
             .then((data) => this.displayWeather(data));
+    },
+
+    // 
+    fetchCords: function(lat, lon){
+        fetch("https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + this.apiKey)
+            .then((response) => response.json())
+            .then((data) => this.switchCordToCity(data));
     },
 
     fetchCountry: function(city){
         fetch("https://restcountries.com/v3.1/capital/" + city +"")
             .then((response) => response.json())
             .then((data) => this.displayCountry(data));
+    },
+
+    // 
+    switchCordToCity: function(data){
+        const { name } = data;
+        city = name;
+        this.fetchWeather(city);
     },
 
     displayCountry: function(data){
@@ -47,8 +58,6 @@ let weather = {
         document.querySelector(".pressure").innerText = "Pressure: " + pressure + "mbar";
         document.querySelector(".wind-speed").innerText = "Wind speed: " + speed + "km/h ";
         document.querySelector(".wind-direction").innerText = "Wind Direction: " + deg + "° (" + this.degToCompass(deg) + ")";
-        
-        document.querySelector(".weather-loading").classList.remove("loading");
 
         document.body.style.backgroundImage = "url('https://source.unsplash.com/1600x900/?" + name + "')"
     },
@@ -56,6 +65,9 @@ let weather = {
     search: function(){
         this.fetchWeather(document.querySelector(".search-bar").value);
         this.fetchCountry(document.querySelector(".search-bar").value);
+        cords = document.querySelector(".search-bar").value;
+        arr = cords.split(' ');
+        this.fetchCords(arr[0], arr[1]);
     }
 };
 
