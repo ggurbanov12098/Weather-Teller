@@ -31,8 +31,8 @@ let weather = {
     displayCountry: function(data){
         const { official } = data[0].name;
         const { png } = data[0].flags;
-        document.querySelector(".country").innerText = "Country: " + official;
         document.querySelector(".flag-icon").innerHTML = '<img src="' + png + '" alt=""></img>';
+        document.querySelector(".country").innerText = "Country: " + official;
     },
 
     degToCompass: function(num){
@@ -43,14 +43,18 @@ let weather = {
     },
 
     displayWeather: function(data) {
-        const { name } = data;
+        const { name, dt } = data;
         const { icon, description, main } = data.weather[0];
         const { temp, temp_min, temp_max, pressure, feels_like, humidity } = data.main;
         const { speed, deg } = data.wind;
+        date = new Date(dt * 1000);
         document.querySelector(".city").innerHTML = "Weather in " + name;
+        document.querySelector(".temp").innerText = temp + "°C";
+        
         document.querySelector(".icon").src = "https://openweathermap.org/img/wn/" + icon + ".png"
         document.querySelector(".description").innerText = description;
-        document.querySelector(".temp").innerText = temp + "°C";
+
+        document.querySelector(".date").innerText = "Date: " + date;
         document.querySelector(".main-weather").innerText = "General: " + main;
         document.querySelector(".temp-min-max").innerText = "Min:  " + temp_min + "°C / Max: " + temp_max + "°C";
         document.querySelector(".feels-like").innerText = "Feels like: " + feels_like + "°C";
@@ -58,16 +62,15 @@ let weather = {
         document.querySelector(".pressure").innerText = "Pressure: " + pressure + "mbar";
         document.querySelector(".wind-speed").innerText = "Wind speed: " + speed + "km/h ";
         document.querySelector(".wind-direction").innerText = "Wind Direction: " + deg + "° (" + this.degToCompass(deg) + ")";
-
-        document.body.style.backgroundImage = "url('https://source.unsplash.com/1600x900/?" + name + "')"
+        document.body.style.backgroundImage = "url('https://source.unsplash.com/1600x900/?" + name + "')";
     },
 
     search: function(){
-        this.fetchWeather(document.querySelector(".search-bar").value);
-        this.fetchCountry(document.querySelector(".search-bar").value);
         cords = document.querySelector(".search-bar").value;
         arr = cords.split(' ');
         this.fetchCords(arr[0], arr[1]);
+        this.fetchCountry(document.querySelector(".search-bar").value);
+        this.fetchWeather(document.querySelector(".search-bar").value);
     }
 };
 
