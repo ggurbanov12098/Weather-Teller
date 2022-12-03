@@ -1,5 +1,7 @@
 let weather = {
     apiKey: "50697639d130e6a0f1a08e4c6825c5f0",
+    // https://api.openweathermap.org/data/2.5/weather?lat=40&lon=50&units=metric&appid=50697639d130e6a0f1a08e4c6825c5f0
+
     fetchWeather: function(city){
         fetch("https://api.openweathermap.org/data/2.5/weather?q=" 
         + city 
@@ -7,6 +9,19 @@ let weather = {
         + this.apiKey)
             .then((response) => response.json())
             .then((data) => this.displayWeather(data));
+    },
+
+    fetchCountry: function(city){
+        fetch("https://restcountries.com/v3.1/capital/" + city +"")
+            .then((response) => response.json())
+            .then((data) => this.displayCountry(data));
+    },
+
+    displayCountry: function(data){
+        const { official } = data[0].name;
+        const { png } = data[0].flags;
+        document.querySelector(".country").innerText = "Country: " + official;
+        document.querySelector(".flag-icon").innerHTML = '<img src="' + png + '" alt=""></img>';
     },
 
     degToCompass: function(num){
@@ -32,11 +47,15 @@ let weather = {
         document.querySelector(".pressure").innerText = "Pressure: " + pressure + "mbar";
         document.querySelector(".wind-speed").innerText = "Wind speed: " + speed + "km/h ";
         document.querySelector(".wind-direction").innerText = "Wind Direction: " + deg + "° (" + this.degToCompass(deg) + ")";
+        
+        document.querySelector(".weather-loading").classList.remove("loading");
+
         document.body.style.backgroundImage = "url('https://source.unsplash.com/1600x900/?" + name + "')"
     },
 
     search: function(){
         this.fetchWeather(document.querySelector(".search-bar").value);
+        this.fetchCountry(document.querySelector(".search-bar").value);
     }
 };
 
