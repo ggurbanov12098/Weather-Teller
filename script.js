@@ -1,6 +1,6 @@
 let weather = {
     apiKey: "50697639d130e6a0f1a08e4c6825c5f0",
-    // https://api.openweathermap.org/data/2.5/weather?lat=40&lon=50&units=metric&appid=50697639d130e6a0f1a08e4c6825c5f0
+    // https:api.openweathermap.org/data/2.5/weather?lat=40&lon=50&units=metric&appid=50697639d130e6a0f1a08e4c6825c5f0;
 
     fetchWeather: function(city){
         fetch("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&appid=" + this.apiKey)
@@ -8,7 +8,6 @@ let weather = {
             .then((data) => this.displayWeather(data));
     },
 
-    // 
     fetchCords: function(lat, lon){
         fetch("https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + this.apiKey)
             .then((response) => response.json())
@@ -16,12 +15,11 @@ let weather = {
     },
 
     fetchCountry: function(city){
-        fetch("https://restcountries.com/v3.1/capital/" + city +"")
+        fetch("https://restcountries.com/v3.1/capital/" + city + "")
             .then((response) => response.json())
             .then((data) => this.displayCountry(data));
     },
 
-    // 
     switchCordToCity: function(data){
         const { name } = data;
         city = name;
@@ -74,9 +72,35 @@ let weather = {
     }
 };
 
+// Geolocation
+function getGeolocation(){
+    const options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+    };
+    function success(pos) {
+        const crd = pos.coords;
+        console.log(crd.latitude);
+        console.log(crd.longitude);
+        console.log(`More or less ${crd.accuracy} meters accuracy of GPS.`);
+        weather.fetchCords(crd.latitude, crd.longitude);
+    }
+    function error(err) {
+        alert(`ERROR(${err.code}): ${err.message}`);
+    }
+    navigator.geolocation.getCurrentPosition(success, error, options);
+};
+// 
+
 document.querySelector(".search-button").addEventListener("click", function(){
-    weather.search();
+    weather.search();    
 });
+
+document.querySelector(".geo").addEventListener("click", function(){
+    getGeolocation();    
+});
+
 
 document.querySelector(".search-bar").addEventListener("keyup", function(event){
     if(event.key == "Enter"){
