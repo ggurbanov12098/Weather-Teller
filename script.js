@@ -8,19 +8,33 @@ let weather = {
             .then((response) => response.json())
             .then((data) => this.displayWeather(data));
     },
+
+    degToCompass: function(num){
+        var val = Math.floor((num / 22.5) + 0.5);
+        var arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+        direction = arr[(val % 16)];
+        return direction;
+    },
+
     displayWeather: function(data) {
         const { name } = data;
-        const { icon, description } = data.weather[0];
-        const { temp, humidity } = data.main;
-        const { speed } = data.wind;
+        const { icon, description, main } = data.weather[0];
+        const { temp, temp_min, temp_max, pressure, feels_like, humidity } = data.main;
+        const { speed, deg } = data.wind;
         document.querySelector(".city").innerHTML = "Weather in " + name;
         document.querySelector(".icon").src = "https://openweathermap.org/img/wn/" + icon + ".png"
         document.querySelector(".description").innerText = description;
         document.querySelector(".temp").innerText = temp + "°C";
+        document.querySelector(".main-weather").innerText = "General: " + main;
+        document.querySelector(".temp-min-max").innerText = "Min:  " + temp_min + "°C / Max: " + temp_max + "°C";
+        document.querySelector(".feels-like").innerText = "Feels like: " + feels_like + "°C";
         document.querySelector(".humidity").innerText = "Humidity: " + humidity + "%";
-        document.querySelector(".wind").innerText = "Wind speed: " + speed + "km/h";
+        document.querySelector(".pressure").innerText = "Pressure: " + pressure + "mbar";
+        document.querySelector(".wind-speed").innerText = "Wind speed: " + speed + "km/h ";
+        document.querySelector(".wind-direction").innerText = "Wind Direction: " + deg + "° (" + this.degToCompass(deg) + ")";
         document.body.style.backgroundImage = "url('https://source.unsplash.com/1600x900/?" + name + "')"
     },
+
     search: function(){
         this.fetchWeather(document.querySelector(".search-bar").value);
     }
