@@ -93,7 +93,7 @@ let weather = {
         document.querySelector(".feels-like").innerText = "Feels like: " + feels_like + "°C";
         document.querySelector(".humidity").innerText = "Humidity: " + humidity + "%";
         document.querySelector(".pressure").innerText = "Pressure: " + pressure + "mbar";
-        document.querySelector(".wind-speed").innerText = "Wind speed: " + speed + "km/h ";
+        document.querySelector(".wind-speed").innerText = "Wind speed: " + speed + "m/s ";
         document.querySelector(".wind-direction").innerText = "Wind Direction: " + deg + "° (" + this.degToCompass(deg) + ")";
         document.body.style.backgroundImage = "url('https://source.unsplash.com/1600x900/?" + name + "')";
     },
@@ -140,5 +140,5 @@ document.querySelector(".search-bar").addEventListener("keyup", function(event){
         weather.search();
     }
 })
-
-// weather.fetchWeather("Baku");
+// start page with Baku
+weather.fetchWeather("Baku");
