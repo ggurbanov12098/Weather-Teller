@@ -11,7 +11,7 @@ let weather = {
     fetchCords: function(lat, lon){
         fetch("https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + this.apiKey)
             .then((response) => response.json())
-            .then((data) => this.switchCordToCity(data));
+            .then((data) => this.switchCordToCity(data) & this.geolocationToCCA2(data));
     },
 
     fetchCountry: function(city){
@@ -19,7 +19,28 @@ let weather = {
             .then((response) => response.json())
             .then((data) => this.displayCountry(data));
     },
+// 
+    geolocationToCCA2: function(data){
+        const { country } = data.sys;
+        console.log(country);
+        fetch("https://restcountries.com/v3.1/alpha/" + country + "")
+            .then((response) => response.json())
+            .then((data) => this.geolocationToCountry(data));
+    },
 
+    geolocationToCountry: function(data){
+        const {status} = data;
+        if(status == 404){
+            document.querySelector(".flag-icon").remove();
+            document.querySelector(".country").remove();
+        } else {
+        const { official } = data[0].name;
+        const { png } = data[0].flags;
+        document.querySelector(".flag-icon").innerHTML = '<img src="' + png + '" alt=""></img>';
+        document.querySelector(".country").innerText = "Country: " + official;
+        }
+    },
+// 
     switchCordToCity: function(data){
         const { name } = data;
         city = name;
@@ -31,11 +52,12 @@ let weather = {
         if(status == 404){
             document.querySelector(".flag-icon").remove();
             document.querySelector(".country").remove();
-        }
+        } else {
         const { official } = data[0].name;
         const { png } = data[0].flags;
         document.querySelector(".flag-icon").innerHTML = '<img src="' + png + '" alt=""></img>';
         document.querySelector(".country").innerText = "Country: " + official;
+        }
     },
 
     degToCompass: function(num){
@@ -50,14 +72,22 @@ let weather = {
         const { icon, description, main } = data.weather[0];
         const { temp, temp_min, temp_max, pressure, feels_like, humidity } = data.main;
         const { speed, deg } = data.wind;
+        // date = new Date(dt * 1000);
         date = new Date(dt * 1000);
+        dateFormat= new Date(date);
         document.querySelector(".city").innerHTML = "Weather in " + name;
         document.querySelector(".temp").innerText = temp + "°C";
         
         document.querySelector(".icon").src = "https://openweathermap.org/img/wn/" + icon + ".png"
         document.querySelector(".description").innerText = description;
 
-        document.querySelector(".date").innerText = "Date: " + date;
+        // document.querySelector(".date").innerText = "Date: " + date;
+        document.querySelector(".date").innerText = "Date: "+ dateFormat.getDate()+
+        "/"+(dateFormat.getMonth()+1)+
+        "/"+dateFormat.getFullYear()+
+        " "+dateFormat.getHours()+
+        ":"+dateFormat.getMinutes()+
+        ":"+dateFormat.getSeconds();
         document.querySelector(".main-weather").innerText = "General: " + main;
         document.querySelector(".temp-min-max").innerText = "Min:  " + temp_min + "°C / Max: " + temp_max + "°C";
         document.querySelector(".feels-like").innerText = "Feels like: " + feels_like + "°C";
@@ -86,9 +116,7 @@ function getGeolocation(){
     };
     function success(pos) {
         const crd = pos.coords;
-        console.log(crd.latitude);
-        console.log(crd.longitude);
-        console.log(`More or less ${crd.accuracy} meters accuracy of GPS.`);
+        alert('(Latitude: ' + crd.latitude + ' Longtitude: ' + crd.longitude + `) More or less ${crd.accuracy} meters accuracy of GPS.`);
         weather.fetchCords(crd.latitude, crd.longitude);
     }
     function error(err) {
