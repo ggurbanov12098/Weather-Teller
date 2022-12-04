@@ -27,6 +27,11 @@ let weather = {
     },
 
     displayCountry: function(data){
+        const {status} = data;
+        if(status == 404){
+            document.querySelector(".flag-icon").remove();
+            document.querySelector(".country").remove();
+        }
         const { official } = data[0].name;
         const { png } = data[0].flags;
         document.querySelector(".flag-icon").innerHTML = '<img src="' + png + '" alt=""></img>';
